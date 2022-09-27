@@ -29,13 +29,14 @@ type
     CbBomba: TComboBox;
     EdtVlrImposto: TEdit;
     Label6: TLabel;
+    BtnSair: TButton;
+    Label7: TLabel;
     procedure BtnSalvarClick(Sender: TObject);
-    procedure EdtQtdLitrosKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure CbBombaKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure BtnSairClick(Sender: TObject);
+    procedure CbBombaChange(Sender: TObject);
+    procedure EdtQtdLitrosExit(Sender: TObject);
   private
     SqlConectionBD: TSQLConnection;
     FDmConexao: TDmConexao;
@@ -46,111 +47,127 @@ type
     Property DmConexao: TDmConexao Read GetDmConexao write FDmConexao;
   end;
 
+  TCaptionHelper = record helper for TCaption
+  private
+    function ToCurrency: Currency;
+  end;
+
 var
   FrmAbastecimento: TFrmAbastecimento;
 
 implementation
 
 Uses
-  UnAbastecer;
+  UnAbastecer, UnComum;
 
 {$R *.dfm}
+
+procedure TFrmAbastecimento.BtnSairClick(Sender: TObject);
+begin
+  Close;
+end;
 
 procedure TFrmAbastecimento.BtnSalvarClick(Sender: TObject);
 var
   LAbastecer: TAbastecer;
 begin
+  if CbBomba.ItemIndex < 0 then
+  begin
+    ShowMessage('Informe uma bomba para realizar o lançamento.');
+    CbBomba.SetFocus;
+    Exit;
+  end;
+
   try
     LAbastecer := TAbastecer.Create;
     LAbastecer.SqlConexao := DmConexao.FDConnection;
     LAbastecer.Data := DtData.Date;
     LAbastecer.IdBomba := Integer(CbBomba.Items.Objects[CbBomba.ItemIndex]);
-    LAbastecer.QtdLitros := StrToCurr(EdtQtdLitros.Text);
-    LAbastecer.ValorImposto := StrToCurr(EdtVlrImposto.Text);
-    LAbastecer.ValorTotal := StrToCurr(EdtVlrTotal.Text);
+    LAbastecer.QtdLitros := EdtQtdLitros.Text.ToCurrency;
+    LAbastecer.ValorImposto := EdtVlrImposto.Text.ToCurrency;
+    LAbastecer.ValorTotal := EdtVlrTotal.Text.ToCurrency;
     LAbastecer.Abastecer;
+
+    ShowMessage('Abastecimento realizado com sucesso.');
+
+    LimparCampos(FrmAbastecimento);
   finally
     FreeAndNil(LAbastecer);
   end;
 
 end;
 
-procedure TFrmAbastecimento.CbBombaKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmAbastecimento.CbBombaChange(Sender: TObject);
 Const
   LSql = 'SELECT ABC_BOMBA.VALOR_LITRO ' + sLineBreak + '  FROM ABC_BOMBA ' +
     sLineBreak + ' WHERE ABC_BOMBA.ID_BOMBA = %0:d';
 Var
   LQuery: TFDQuery;
 begin
-  if Key in [VK_DOWN, VK_RETURN] then
-  begin
-    LQuery := TFDQuery.Create(Nil);
-    try
-      LQuery.Connection := DmConexao.FDConnection;
-      LQuery.Close;
-      LQuery.SQL.Clear;
-      LQuery.Open(Format(LSql,
-        [Integer(CbBomba.Items.Objects[CbBomba.ItemIndex])]));
+  LQuery := TFDQuery.Create(Nil);
+  try
+    LQuery.Connection := DmConexao.FDConnection;
+    LQuery.Close;
+    LQuery.SQL.Clear;
+    LQuery.Open(Format(LSql,
+      [Integer(CbBomba.Items.Objects[CbBomba.ItemIndex])]));
 
-      EdtVlrLitro.Text := FormatCurr('##0.00', LQuery.FieldByName('VALOR_LITRO')
-        .AsCurrency);
-      EdtQtdLitros.SetFocus;
-    finally
-      FreeAndNil(LQuery);
-    end;
+    EdtVlrLitro.Text := FormatCurr('##0.00', LQuery.FieldByName('VALOR_LITRO')
+      .AsCurrency);
+  finally
+    FreeAndNil(LQuery);
   end;
 end;
 
-procedure TFrmAbastecimento.EdtQtdLitrosKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmAbastecimento.EdtQtdLitrosExit(Sender: TObject);
 var
   LCalculoTotal: Currency;
 begin
-  if Key in [VK_DOWN, VK_RETURN] then
-  begin
-    LCalculoTotal := StrToCurr(EdtQtdLitros.Text) * StrToCurr(EdtVlrLitro.Text);
-    EdtVlrImposto.Text := FormatCurr('##0.00', LCalculoTotal * 13 / 100);
-    LCalculoTotal := LCalculoTotal + (LCalculoTotal * 13 / 100);
-    EdtVlrTotal.Text := FormatCurr('##0.00', LCalculoTotal);
-  end;
+  LCalculoTotal := EdtQtdLitros.Text.ToCurrency * EdtVlrLitro.Text.ToCurrency;
+  EdtVlrImposto.Text := FormatCurr('##0.00', LCalculoTotal * 13 / 100);
+  LCalculoTotal := LCalculoTotal + (LCalculoTotal * 13 / 100);
+  EdtVlrTotal.Text := FormatCurr('##0.00', LCalculoTotal);
 end;
 
 procedure TFrmAbastecimento.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if Key = VK_RETURN then
-    perform(WM_NEXTDLGCTL, 0, 0);
+  // if Key IN [VK_DOWN, VK_RETURN] then
+  perform(WM_NEXTDLGCTL, 0, 0);
 end;
 
 procedure TFrmAbastecimento.FormShow(Sender: TObject);
-var
-  LTrans: TDBXTransaction;
 begin
+  CbBomba.SetFocus;
   DtData.Date := Date;
   FDQuery1.Connection := DmConexao.FDConnection;
   FDQuery1.Close;
   FDQuery1.SQL.Clear;
-  // try
   try
-    // LTrans := SqlConectionBD.BeginTransaction(TDBXIsolations.ReadCommitted);
-    FDQuery1.Open('SELECT * FROM ABC_BOMBA');
-  finally
-    // SqlConectionBD.CommitFreeAndNil(LTrans);
-  end;
+    try
+      DmConexao.FDConnection.StartTransaction;
+      FDQuery1.Open('SELECT * FROM ABC_BOMBA');
+    finally
+      DmConexao.FDConnection.Commit;
+    end;
 
-  { except
+    if FDQuery1.IsEmpty then
+    begin
+      ShowMessage
+        ('Não existem bombas cadastradas, faça o cadastro de uma bomba.');
+      Close;
+    end;
+
+  except
     On E: Exception Do
     Begin
-    SqlConectionBD.RollbackFreeAndNil(LTrans);
-    ShowMessage(E.Message);
-
+      DmConexao.FDConnection.Rollback;
+      ShowMessage(E.Message);
     End;
-    end; }
+  end;
 
   while not FDQuery1.Eof do
   begin
-    // CbBomba.Items.Add(FDQuery1.FieldByName('NOME_BOMBA').AsString);
     CbBomba.Items.AddObject(FDQuery1.FieldByName('NOME_BOMBA').AsString,
       TObject(FDQuery1.FieldByName('ID_BOMBA').AsInteger));
     FDQuery1.Next;
@@ -164,6 +181,13 @@ begin
     FDmConexao := TDmConexao.Create(Self);
 
   Result := FDmConexao;
+end;
+
+{ TCaptionHelper }
+
+function TCaptionHelper.ToCurrency: Currency;
+begin
+  Result := StrToCurr(Self);
 end;
 
 end.

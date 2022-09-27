@@ -33,7 +33,7 @@ type
 implementation
 
 Uses
-  System.SysUtils;
+  System.SysUtils, Vcl.Dialogs;
 
 { TAbastecer }
 
@@ -42,22 +42,33 @@ var
   LQuery: TFDQuery;
 begin
   try
-    LQuery := TFDQuery.Create(nil);
-    LQuery.Connection := SqlConexao;
-    LQuery.SQL.Add
-      ('INSERT INTO ABC_ABASTECIMENTO (ID_ABASTECIMENTO, ID_BOMBA, DATA, QTD_LITRO, VALOR, VALOR_IMPOSTO, VALOR_TOTAL)');
-    LQuery.SQL.Add
-      (' VALUES (GEN_ID(gn_abc_abastecimento, 1), :IdBomba, :Data, :QtdLitro, :Valor, :VlrImposto, :VlrTotal)');
+    try
+      LQuery := TFDQuery.Create(nil);
+      LQuery.Connection := SqlConexao;
+      LQuery.SQL.Add
+        ('INSERT INTO ABC_ABASTECIMENTO (ID_ABASTECIMENTO, ID_BOMBA, DATA, QTD_LITRO, VALOR, VALOR_IMPOSTO, VALOR_TOTAL)');
+      LQuery.SQL.Add
+        (' VALUES (GEN_ID(gn_abc_abastecimento, 1), :IdBomba, :Data, :QtdLitro, :Valor, :VlrImposto, :VlrTotal)');
 
-    LQuery.ParamByName('IdBomba').AsInteger := IdBomba;
-    LQuery.ParamByName('Data').AsDate := Data;
-    LQuery.ParamByName('QtdLitro').AsCurrency := QtdLitros;
-    LQuery.ParamByName('Valor').AsCurrency := QtdLitros;
-    LQuery.ParamByName('VlrImposto').AsCurrency := ValorImposto;
-    LQuery.ParamByName('VlrTotal').AsCurrency := ValorTotal;
-    LQuery.ExecSQL;
-  finally
-    FreeAndNil(LQuery);
+      LQuery.ParamByName('IdBomba').AsInteger := IdBomba;
+      LQuery.ParamByName('Data').AsDate := Data;
+      LQuery.ParamByName('QtdLitro').AsCurrency := QtdLitros;
+      LQuery.ParamByName('Valor').AsCurrency := QtdLitros;
+      LQuery.ParamByName('VlrImposto').AsCurrency := ValorImposto;
+      LQuery.ParamByName('VlrTotal').AsCurrency := ValorTotal;
+      SqlConexao.StartTransaction;
+      LQuery.ExecSQL;
+    finally
+      SqlConexao.Commit;
+      FreeAndNil(LQuery);
+    end;
+  except
+    On E: Exception Do
+    Begin
+      SqlConexao.Rollback;
+      ShowMessage('Não foi possível inserir os dados na tabela.' + sLineBreak +
+        'Erro: ' + E.Message);
+    End;
   end;
 end;
 

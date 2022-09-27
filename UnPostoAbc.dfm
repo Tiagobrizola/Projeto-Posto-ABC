@@ -1,7 +1,7 @@
 object FrmPostoABC: TFrmPostoABC
   Left = 0
   Top = 0
-  Caption = 'FrmPostoABC'
+  Caption = 'Controle de abastecimentos'
   ClientHeight = 459
   ClientWidth = 635
   Color = clBtnFace
@@ -36,7 +36,7 @@ object FrmPostoABC: TFrmPostoABC
     object Imprimir1: TMenuItem
       Caption = 'Imprimir'
       object Imprimirrelatrio1: TMenuItem
-        Caption = 'Imprimir relat'#243'rio'
+        Action = act_imprimir
       end
     end
     object Sair1: TMenuItem
@@ -57,21 +57,11 @@ object FrmPostoABC: TFrmPostoABC
     end
     object act_imprimir: TAction
       Caption = 'Imprimir relat'#243'rio'
+      OnExecute = act_imprimirExecute
     end
   end
-  object FDConnection2: TFDConnection
-    Params.Strings = (
-      'Database=localhost/3050:C:\Temp\Diversos\BANCO.FDB'
-      'DriverID=FB'
-      'Password=masterkey'
-      'User_Name=SYSDBA')
-    Connected = True
-    Left = 568
-    Top = 152
-  end
   object FDQuery1: TFDQuery
-    Connection = FDConnection2
-    Left = 176
-    Top = 168
+    Left = 560
+    Top = 152
   end
 end

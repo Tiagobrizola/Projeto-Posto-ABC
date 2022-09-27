@@ -4,7 +4,7 @@ object DmConexao: TDmConexao
   Width = 463
   object FDConnection: TFDConnection
     Params.Strings = (
-      'Database=localhost/3050:C:\Temp\Diversos\BANCO.FDB'
+      'Database=C:\Temp\Diversos\Projeto Posto\Banco\BANCO.FDB'
       'DriverID=FB'
       'Password=masterkey'
       'User_Name=SYSDBA')

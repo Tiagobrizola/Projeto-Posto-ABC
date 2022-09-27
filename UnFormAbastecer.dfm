@@ -57,13 +57,27 @@ object FrmAbastecimento: TFrmAbastecimento
     Height = 13
     Caption = 'Valor imposto:'
   end
+  object Label7: TLabel
+    Left = 336
+    Top = 184
+    Width = 27
+    Height = 13
+    Caption = '13%'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clRed
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
   object EdtQtdLitros: TEdit
     Left = 224
     Top = 123
     Width = 102
     Height = 21
     TabOrder = 2
-    OnKeyDown = EdtQtdLitrosKeyDown
+    Text = '0,00'
+    OnExit = EdtQtdLitrosExit
   end
   object EdtVlrTotal: TEdit
     Left = 224
@@ -89,6 +103,15 @@ object FrmAbastecimento: TFrmAbastecimento
       TabOrder = 0
       OnClick = BtnSalvarClick
     end
+    object BtnSair: TButton
+      Left = 11
+      Top = 54
+      Width = 83
+      Height = 48
+      Caption = 'Sair'
+      TabOrder = 1
+      OnClick = BtnSairClick
+    end
   end
   object DtData: TDateTimePicker
     Left = 224
@@ -112,9 +135,12 @@ object FrmAbastecimento: TFrmAbastecimento
     Left = 224
     Top = 96
     Width = 145
-    Height = 21
+    Height = 22
+    Style = csOwnerDrawFixed
+    DoubleBuffered = False
+    ParentDoubleBuffered = False
     TabOrder = 1
-    OnKeyDown = CbBombaKeyDown
+    OnChange = CbBombaChange
   end
   object EdtVlrImposto: TEdit
     Left = 224

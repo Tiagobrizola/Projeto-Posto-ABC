@@ -23,7 +23,6 @@ type
     ActionList1: TActionList;
     act_abastecimento: TAction;
     act_cadastroBomba: TAction;
-    FDConnection2: TFDConnection;
     FDQuery1: TFDQuery;
     Imprimir1: TMenuItem;
     Sair1: TMenuItem;
@@ -32,6 +31,7 @@ type
     procedure act_abastecimentoExecute(Sender: TObject);
     procedure act_cadastroBombaExecute(Sender: TObject);
     procedure Sair1Click(Sender: TObject);
+    procedure act_imprimirExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -44,26 +44,32 @@ var
 implementation
 
 Uses
-  UnFormAbastecer, UnFormCadastroBomba;
+  UnFormAbastecer, UnFormCadastroBombas, UnFormFiltroImpressao;
 
 {$R *.dfm}
 
 procedure TFrmPostoABC.act_abastecimentoExecute(Sender: TObject);
 begin
   FrmAbastecimento.Show;
-  //FDQuery1.Close;
- // FDQuery1.SQL.Clear;
-  //FDQuery1.SQL.Add('SELECT * FROM ABC_BOMBA');
-  //FDQuery1.Open('SELECT * FROM ABC_BOMBA');
+  // FDQuery1.Close;
+  // FDQuery1.SQL.Clear;
+  // FDQuery1.SQL.Add('SELECT * FROM ABC_BOMBA');
+  // FDQuery1.Open('SELECT * FROM ABC_BOMBA');
 
- // ShowMessage(IntToStr(FDQuery1.RecordCount));
+  // ShowMessage(IntToStr(FDQuery1.RecordCount));
 
 end;
 
 procedure TFrmPostoABC.act_cadastroBombaExecute(Sender: TObject);
 begin
-  FrmCadastroBomba.Show
+  FormCadastroBombas.Show;
 end;
+
+procedure TFrmPostoABC.act_imprimirExecute(Sender: TObject);
+begin
+  FrmImpressao.Show;
+end;
+
 
 procedure TFrmPostoABC.Sair1Click(Sender: TObject);
 begin
