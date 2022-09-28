@@ -77,6 +77,7 @@ object FrmAbastecimento: TFrmAbastecimento
     Height = 21
     TabOrder = 2
     Text = '0,00'
+    OnChange = EdtQtdLitrosExit
     OnExit = EdtQtdLitrosExit
   end
   object EdtVlrTotal: TEdit
