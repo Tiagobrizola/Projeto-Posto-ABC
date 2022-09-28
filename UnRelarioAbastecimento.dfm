@@ -1,4 +1,4 @@
-﻿object FrmImprimirReport: TFrmImprimirReport
+object FrmImprimirReport: TFrmImprimirReport
   Left = 0
   Top = 0
   Caption = 'Imprimir relat'#243'rio'
@@ -27,13 +27,14 @@
       Left = 38
       Top = 38
       Width = 718
-      Height = 75
+      Height = 112
       BandType = btTitle
+      BeforePrint = RLBandCabecalhoBeforePrint
       object RLDrawCabecalho: TRLDraw
         Left = 3
         Top = 16
         Width = 712
-        Height = 48
+        Height = 90
       end
       object RLLabel1: TRLLabel
         Left = 104
@@ -48,10 +49,36 @@
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object RLLabel9: TRLLabel
+        Left = 468
+        Top = 85
+        Width = 52
+        Height = 16
+        Caption = 'Periodo:'
+      end
+      object RLLabelDtInicial: TRLLabel
+        Left = 523
+        Top = 85
+        Width = 71
+        Height = 16
+      end
+      object RLLabel10: TRLLabel
+        Left = 595
+        Top = 85
+        Width = 22
+        Height = 16
+        Caption = 'at'#233
+      end
+      object RLLabelDtFinal: TRLLabel
+        Left = 615
+        Top = 85
+        Width = 92
+        Height = 16
+      end
     end
     object RLGroup1: TRLGroup
       Left = 38
-      Top = 113
+      Top = 150
       Width = 718
       Height = 120
       DataFields = 'DATA'
@@ -67,6 +94,10 @@
           Top = 16
           Width = 712
           Height = 26
+          Color = clWhite
+          ParentColor = False
+          Pen.Style = psInsideFrame
+          Transparent = False
         end
         object RLLabelData: TRLLabel
           Left = 166
@@ -203,15 +234,15 @@
         end
       end
     end
-    object RLBandRodapé: TRLBand
+    object RLBand1: TRLBand
       Left = 38
-      Top = 233
+      Top = 270
       Width = 718
-      Height = 56
-      BeforePrint = RLBandRodapéBeforePrint
+      Height = 72
+      BeforePrint = RLBand1BeforePrint
       object RLDraw2: TRLDraw
         Left = 3
-        Top = 5
+        Top = 6
         Width = 712
         Height = 48
       end

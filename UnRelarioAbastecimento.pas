@@ -34,13 +34,18 @@ type
     RLLabelImposto: TRLLabel;
     RLLabel7: TRLLabel;
     RLLabelTotal: TRLLabel;
-    RLBandRodapé: TRLBand;
+    RLLabel9: TRLLabel;
+    RLLabelDtInicial: TRLLabel;
+    RLLabel10: TRLLabel;
+    RLLabelDtFinal: TRLLabel;
+    RLBand1: TRLBand;
     RLDraw2: TRLDraw;
     RLLabel8: TRLLabel;
     RLLabelTotalGeral: TRLLabel;
     procedure RLBandDadosBeforePrint(Sender: TObject; var PrintIt: Boolean);
     procedure RLBandDatelheBeforePrint(Sender: TObject; var PrintIt: Boolean);
-    procedure RLBandRodapéBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    procedure RLBandCabecalhoBeforePrint(Sender: TObject; var PrintIt: Boolean);
+    procedure RLBand1BeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     FDataFinal: TDate;
     FDataInicial: TDate;
@@ -82,11 +87,24 @@ begin
   Result := FDmConexao;
 end;
 
+procedure TFrmImprimirReport.RLBand1BeforePrint(Sender: TObject;
+  var PrintIt: Boolean);
+begin
+  RLLabelTotalGeral.Caption := FormatCurr('##0.00', TotalGeralRel);
+  TotalGeralRel := 0;
+end;
+
+procedure TFrmImprimirReport.RLBandCabecalhoBeforePrint(Sender: TObject;
+  var PrintIt: Boolean);
+begin
+  RLLabelDtInicial.Caption := FormatDateTime('dd/mm/yyyy', DataInicial);
+  RLLabelDtFinal.Caption := FormatDateTime('dd/mm/yyyy', DataFinal);
+end;
+
 procedure TFrmImprimirReport.RLBandDadosBeforePrint(Sender: TObject;
   var PrintIt: Boolean);
 begin
   RLLabelData.Caption := Query.FieldByName('DATA').AsString;
-  // TotalGeralRel := 0;
 end;
 
 procedure TFrmImprimirReport.RLBandDatelheBeforePrint(Sender: TObject;
@@ -102,12 +120,6 @@ begin
   RLLabelTotal.Caption := FormatCurr('##0.00', Query.FieldByName('VALOR_TOTAL')
     .AsCurrency);
   TotalGeralRel := TotalGeralRel + Query.FieldByName('VALOR_TOTAL').AsCurrency;
-end;
-
-procedure TFrmImprimirReport.RLBandRodapéBeforePrint(Sender: TObject;
-  var PrintIt: Boolean);
-begin
-  RLLabelTotalGeral.Caption := FormatCurr('##0.00', TotalGeralRel);
 end;
 
 procedure TFrmImprimirReport.SetDataFinal(const Value: TDate);

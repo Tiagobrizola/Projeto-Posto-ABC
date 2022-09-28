@@ -50,7 +50,6 @@ begin
   FrmImprimirReport.IdBomba :=
     Integer(CbBomba.Items.Objects[CbBomba.ItemIndex]);
   SelecionarAbastecimentos;
-  // FrmImprimirReport.Imprimir;
 end;
 
 procedure TFrmImpressao.BtnSairClick(Sender: TObject);
